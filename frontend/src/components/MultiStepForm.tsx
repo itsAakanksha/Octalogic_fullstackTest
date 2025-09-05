@@ -13,11 +13,11 @@ export default function MultiStepForm() {
       case 2:
         return <WheelSelectionStep/>
       case 3:
-        return "VehicleTypeStep"
+        return <VehicleTypeStep/>
       case 4:
-        return "VehicleModelStep"
+        return <VehicleModelStep/>
       case 5:
-        return "DateRangeStep"
+        return <DateRangeStep/>
       case 6:
         return "ConfirmationStep"
       default:
@@ -27,12 +27,10 @@ export default function MultiStepForm() {
 
   return (
     <div className="w-full space-y-6">
-      {/* Progress Indicator */}
       <div className="px-4">
         <ProgressIndicator currentStep={currentStep} totalSteps={totalSteps} />
       </div>
       
-      {/* Form Container */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mx-auto max-w-3xl">
         <div className="p-6 md:p-8">
           {renderStep()}
