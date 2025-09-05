@@ -6,6 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/app.js",
+    "db:migrate": "npx prisma migrate dev",
+    "db:generate": "npx prisma generate",
+    "db:seed": "node prisma/seed.js",
+    "db:setup": "npx prisma migrate dev && npx prisma generate && npm run db:seed",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

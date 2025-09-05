@@ -6,10 +6,63 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+
+model VehicleType {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  wheels    Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  
+  // Relations
+  vehicles  Vehicle[]
+
+  @@map("vehicle_types")
+}
+
+model Vehicle {
+  id             Int         @id @default(autoincrement())
+  modelName      String      @map("model_name") @db.VarChar(100)
+  vehicleTypeId  Int         @map("vehicle_type_id")
+  isAvailable    Boolean     @default(true) @map("is_available")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+  
+
+  vehicleType    VehicleType @relation(fields: [vehicleTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  bookings       Booking[]
+
+  @@map("vehicles")
+  @@index([vehicleTypeId])
+}
+
+model Booking {
+  id            Int           @id @default(autoincrement())
+  firstName     String        @map("first_name") @db.VarChar(50)
+  lastName      String        @map("last_name") @db.VarChar(50)
+  vehicleId     Int           @map("vehicle_id")
+  startDate     DateTime      @map("start_date") @db.Date
+  endDate       DateTime      @map("end_date") @db.Date
+  bookingStatus BookingStatus @default(confirmed) @map("booking_status")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  
+
+  vehicle       Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("bookings")
+  @@index([vehicleId, startDate, endDate], name: "booking_date_vehicle_index")
+}
+
+enum BookingStatus {
+  confirmed
+  cancelled
+}
+
