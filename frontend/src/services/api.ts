@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { ApiResponse, VehicleType, Vehicle, Booking, BookingRequest, AvailabilityRequest } from '../types/index.ts';
+import type { ApiResponse, VehicleType, Vehicle, Booking, BookingRequest, AvailabilityRequest } from '../types';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -10,6 +10,7 @@ const api = axios.create({
   },
 });
 
+// Add response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -19,12 +20,14 @@ api.interceptors.response.use(
 );
 
 export const vehicleService = {
+  // Get vehicle types by wheel count
   getVehicleTypes: async (wheels?: number): Promise<ApiResponse<VehicleType[]>> => {
     const params = wheels ? { wheels } : {};
     const response = await api.get('/vehicle-types', { params });
     return response.data;
   },
 
+  // Get vehicles by vehicle type
   getVehicles: async (vehicleTypeId: number): Promise<ApiResponse<Vehicle[]>> => {
     const response = await api.get('/vehicles', {
       params: { vehicle_type_id: vehicleTypeId }
@@ -32,6 +35,7 @@ export const vehicleService = {
     return response.data;
   },
 
+  // Check vehicle availability
   checkAvailability: async (data: AvailabilityRequest): Promise<ApiResponse<{ available: boolean }>> => {
     const response = await api.get('/bookings/check-availability', {
       params: data
@@ -39,6 +43,7 @@ export const vehicleService = {
     return response.data;
   },
 
+  // Create booking
   createBooking: async (data: BookingRequest): Promise<ApiResponse<Booking>> => {
     const response = await api.post('/bookings', data);
     return response.data;
