@@ -37,7 +37,6 @@ const getVehicles = async (req, res, next) => {
       return res.sendError('vehicle_type_id must be a valid number', 400);
     }
 
-    // Check if vehicle type exists
     const vehicleType = await prisma.vehicleType.findUnique({
       where: { id: vehicleTypeId }
     });

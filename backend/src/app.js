@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import prisma from './config/prisma.js';
+import routes from './routes/index.js';
 import errorHandler from './middlewares/errorHandler.js';
 import responseFormatter from './middlewares/responseFormatter.js';
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(responseFormatter);
 
 
+app.use('/api', routes);
 
 app.use(errorHandler);
 
