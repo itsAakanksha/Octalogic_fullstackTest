@@ -2,6 +2,10 @@ import { useForm } from '../contexts/FormContext';
 import ProgressIndicator from './ProgressIndicator';
 import NameStep from './steps/NameStep';
 import WheelSelectionStep from './steps/WheelSelectionStep.tsx';
+import VehicleTypeStep from './steps/VehicleTypeStep.tsx';
+import VehicleModelStep from './steps/VehicleModelStep.tsx';
+import DateRangeStep from './steps/DateRangeStep.tsx';
+import ConfirmationStep from './steps/ConfirmationStep.tsx';
 
 export default function MultiStepForm() {
   const { currentStep, totalSteps } = useForm();
@@ -19,9 +23,9 @@ export default function MultiStepForm() {
       case 5:
         return <DateRangeStep/>
       case 6:
-        return "ConfirmationStep"
+        return <ConfirmationStep/>
       default:
-        return "Namestep"
+        return <NameStep/>
     }
   };
 
