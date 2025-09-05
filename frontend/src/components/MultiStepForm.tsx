@@ -1,6 +1,7 @@
 import { useForm } from '../contexts/FormContext';
 import ProgressIndicator from './ProgressIndicator';
-
+import NameStep from './steps/NameStep';
+import WheelSelectionStep from './steps/WheelSelectionStep.tsx';
 
 export default function MultiStepForm() {
   const { currentStep, totalSteps } = useForm();
@@ -8,9 +9,9 @@ export default function MultiStepForm() {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return "Namestep"
+        return <NameStep/>
       case 2:
-        return "WheelSelectionStep"
+        return <WheelSelectionStep/>
       case 3:
         return "VehicleTypeStep"
       case 4:
