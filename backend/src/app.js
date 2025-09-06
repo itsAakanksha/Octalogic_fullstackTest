@@ -21,7 +21,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(responseFormatter);
 
 
+app.get('/', (req, res) => {
+  res.sendSuccess('Vehicle Booking API is running!', { status: 'healthy', timestamp: new Date().toISOString() });
+});
+
 app.use('/api', routes);
+app.use('/', routes);
 
 app.use(errorHandler);
 
