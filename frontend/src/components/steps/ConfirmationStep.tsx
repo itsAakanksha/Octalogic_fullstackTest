@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Alert, Divider, Paper, Chip } from '@mui/material';
 import { Calendar, User, Car, Clock, TickCircle } from 'iconsax-react';
 import { format } from 'date-fns'; 
 import { useForm } from '../../contexts/FormContext';
 import { vehicleService } from '../../services/api';
+import type { VehicleType, Vehicle } from '../../types';
 
 export default function ConfirmationStep() {
   const { formData, resetForm } = useForm();
@@ -11,6 +12,40 @@ export default function ConfirmationStep() {
   const [success, setSuccess] = useState(false); 
   const [error, setError] = useState(''); 
   const [bookingId, setBookingId] = useState<number | null>(null); 
+  const [vehicleType, setVehicleType] = useState<VehicleType | null>(null);
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+
+  useEffect(() => {
+    const fetchVehicleDetails = async () => {
+      try {
+        // Fetch vehicle type
+        if (formData.wheels) {
+          const vehicleTypesResponse = await vehicleService.getVehicleTypes(formData.wheels);
+          if (vehicleTypesResponse.success) {
+            const selectedVehicleType = vehicleTypesResponse.data.find(
+              (type: VehicleType) => type.id === formData.vehicleTypeId
+            );
+            setVehicleType(selectedVehicleType || null);
+          }
+        }
+
+        // Fetch vehicle
+        if (formData.vehicleTypeId) {
+          const vehiclesResponse = await vehicleService.getVehicles(formData.vehicleTypeId);
+          if (vehiclesResponse.success) {
+            const selectedVehicle = vehiclesResponse.data.find(
+              (v: Vehicle) => v.id === formData.vehicleId
+            );
+            setVehicle(selectedVehicle || null);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch vehicle details:', err);
+      }
+    };
+
+    fetchVehicleDetails();
+  }, [formData.wheels, formData.vehicleTypeId, formData.vehicleId]); 
 
   const handleSubmit = async () => { 
     if (!formData.vehicleId || !formData.startDate || !formData.endDate) { 
@@ -60,7 +95,7 @@ export default function ConfirmationStep() {
     return (
       <div className="text-center space-y-6">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-          <TickCircle size={40} className="text-green-600" />
+          <TickCircle size="40" color="green" />
         </div>
         
         <div>
@@ -73,10 +108,38 @@ export default function ConfirmationStep() {
         </div>
         
         {bookingId && (
-          <Paper className="p-4 bg-green-50 border border-green-200 rounded-lg">
-            <div className="text-center">
-              <p className="text-sm text-green-700 mb-1">Booking Reference</p>
-              <p className="text-lg font-bold text-green-800">#{bookingId}</p>
+          <Paper className="p-6 bg-green-50 border border-green-200 rounded-lg">
+            <div className="text-center space-y-4">
+              <div>
+                <p className="text-sm text-green-700 mb-1">Booking Reference</p>
+                <p className="text-2xl font-bold text-green-800">#{bookingId}</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                <div>
+                  <p className="text-xs text-green-600 font-medium">Customer</p>
+                  <p className="text-sm text-green-800">{formData.firstName} {formData.lastName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-green-600 font-medium">Vehicle</p>
+                  <p className="text-sm text-green-800">
+                    {vehicle ? vehicle.modelName : 'Vehicle Model'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-green-600 font-medium">Rental Period</p>
+                  <p className="text-sm text-green-800">
+                    {formData.startDate && formData.endDate 
+                      ? `${format(formData.startDate, 'MMM dd')} - ${format(formData.endDate, 'MMM dd, yyyy')}`
+                      : 'Date Range'
+                    }
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-green-600 font-medium">Duration</p>
+                  <p className="text-sm text-green-800">{calculateDays()} days</p>
+                </div>
+              </div>
             </div>
           </Paper>
         )}
@@ -95,14 +158,7 @@ export default function ConfirmationStep() {
             Book Another Vehicle
           </Button>
           
-          <Button 
-            variant="outlined" 
-            fullWidth 
-            onClick={() => window.print()} 
-            className="h-12"
-          >
-            Print Confirmation
-          </Button>
+        
         </div>
       </div>
     ); 
@@ -129,7 +185,7 @@ export default function ConfirmationStep() {
         <Paper className="p-6 border border-gray-200 rounded-lg">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <User size={20} className="text-blue-600" />
+              <User size="32" color="blue" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
           </div>
@@ -148,7 +204,7 @@ export default function ConfirmationStep() {
         <Paper className="p-6 border border-gray-200 rounded-lg">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Car size={20} className="text-purple-600" />
+              <Car size="32" color="purple" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Vehicle Details</h3>
           </div>
@@ -158,11 +214,15 @@ export default function ConfirmationStep() {
             </div>
             <div>
               <p className="text-sm text-gray-500">Vehicle Type</p>
-              <p className="font-medium text-gray-900">Selected Vehicle Type</p>
+              <p className="font-medium text-gray-900">
+                {vehicleType ? vehicleType.name : 'Loading...'}
+              </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Model</p>
-              <p className="font-medium text-gray-900">Selected Model</p>
+              <p className="font-medium text-gray-900">
+                {vehicle ? vehicle.modelName : 'Loading...'}
+              </p>
             </div>
           </div>
         </Paper>
@@ -170,7 +230,7 @@ export default function ConfirmationStep() {
         <Paper className="p-6 border border-gray-200 rounded-lg">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <Calendar size={20} className="text-green-600" />
+              <Calendar size="32" color="green"  />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Rental Period</h3>
           </div>
@@ -217,11 +277,7 @@ export default function ConfirmationStep() {
           {isSubmitting ? 'Processing...' : 'Confirm Booking'}
         </Button>
 
-        <div className="text-center">
-          <p className="text-xs text-gray-500">
-            By confirming, you agree to our terms and conditions
-          </p>
-        </div>
+       
       </div>
     </div>
   );

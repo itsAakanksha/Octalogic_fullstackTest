@@ -83,9 +83,9 @@ export default function DateRangeStep() {
       isLoading={checkingAvailability}
     >
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <div className="space-y-8">
+        <div className="space-y-6">
           <div>
-            <label className="block text-base font-bold text-gray-800 mb-4">
+            <label className="block text-base font-bold text-gray-800 mb-3">
               Start Date:
             </label>
             <DatePicker
@@ -98,8 +98,8 @@ export default function DateRangeStep() {
                   variant: 'outlined',
                   sx: {
                     '& .MuiOutlinedInput-root': {
-                      height: '60px',
-                      fontSize: '18px',
+                      height: '48px',
+                      fontSize: '14px',
                       borderRadius: '12px',
                       '& fieldset': {
                         borderColor: '#d1d5db',
@@ -120,7 +120,7 @@ export default function DateRangeStep() {
           </div>
 
           <div>
-            <label className="block text-base font-bold text-gray-800 mb-4">
+            <label className="block text-base font-bold text-gray-800 mb-3">
               End Date:
             </label>
             <DatePicker
@@ -134,8 +134,8 @@ export default function DateRangeStep() {
                   variant: 'outlined',
                   sx: {
                     '& .MuiOutlinedInput-root': {
-                      height: '60px',
-                      fontSize: '18px',
+                      height: '48px',
+                      fontSize: '14px',
                       borderRadius: '12px',
                       '& fieldset': {
                         borderColor: startDate ? '#d1d5db' : '#f3f4f6',

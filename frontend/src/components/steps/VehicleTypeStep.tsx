@@ -67,7 +67,7 @@ export default function VehicleTypeStep() {
             <RadioGroup
               value={formData.vehicleTypeId?.toString() || ''}
               onChange={handleTypeChange}
-              className="space-y-3"
+              className="space-y-3 gap-2"
             >
               {vehicleTypes.map((type) => (
                 <FormControlLabel
@@ -80,14 +80,14 @@ export default function VehicleTypeStep() {
                         '&.Mui-checked': {
                           color: '#ec4899',
                         },
-                        padding: '6px',
+                        padding: '3px',
                       }}
                     />
                   }
                   label={
                     <span className="text-sm font-medium text-gray-700">{type.name}</span>
                   }
-                  className="border border-gray-200 rounded-lg p-3 m-0 hover:bg-gray-50 transition-colors duration-200"
+                  className="border border-gray-200 rounded-lg p-2 m-0 hover:bg-gray-50 transition-colors duration-200"
                   sx={{
                     width: '100%',
                     marginLeft: 0,
